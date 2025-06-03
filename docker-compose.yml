@@ -3,6 +3,7 @@ version: "3.7"
 services:
   dagster_postgresql:
     image: postgres:11
+    restart: unless-stopped
     container_name: dagster_postgresql
     environment:
       POSTGRES_USER: "postgres_user"
@@ -35,6 +36,7 @@ services:
       - dagster_network
     volumes:
       - ./inventory/:/opt/dagster/app/
+      - /home/ubuntu/jupyterlab/work/src/python:/opt/dagster/app/notebooks
 
 
   dagster_webserver:
@@ -50,6 +52,7 @@ services:
       - -w
       - workspace.yaml
     container_name: dagster_webserver
+    restart: unless-stopped
     expose:
       - "3000"
     ports:
@@ -61,6 +64,7 @@ services:
     volumes: # Make docker client accessible so we can terminate containers from the webserver
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./inventory/:/opt/dagster/app/
     networks:
       - dagster_network
     depends_on:
@@ -86,6 +90,7 @@ services:
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./inventory/:/opt/dagster/app/
     networks:
       - dagster_network
     depends_on:
