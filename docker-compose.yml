@@ -39,10 +39,12 @@ services:
       - /home/ubuntu/jupyterlab/work/src/python:/opt/dagster/app/notebooks
 
 
-  dagster_webserver:
+  dagster-webserver:
     build:
       context: .
       dockerfile: ./Dockerfile_dagster
+    environment:
+      - SERVICE_URL_DAGSTER_WEBSERVER_3300
     entrypoint:
       - dagster-webserver
       - -h
@@ -53,8 +55,6 @@ services:
       - workspace.yaml
     container_name: dagster_webserver
     restart: unless-stopped
-    expose:
-      - "3000"
     ports:
       - "3300:3000"
     environment:
@@ -87,7 +87,7 @@ services:
       DAGSTER_POSTGRES_USER: "postgres_user"
       DAGSTER_POSTGRES_PASSWORD: "postgres_password"
       DAGSTER_POSTGRES_DB: "postgres_db"
-    volumes: # Make docker client accessible so we can launch containers using host docker
+    volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
       - ./inventory/:/opt/dagster/app/
@@ -106,3 +106,4 @@ networks:
 
 volumes:
   dagster_postgresql_volume:
+
